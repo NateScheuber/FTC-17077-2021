@@ -42,6 +42,7 @@ public class Teleop_2021 extends LinearOpMode {
             }
 
 
+
             //intake angle control
             if(gamepad1.right_bumper && gamepad1.left_bumper && robot.intakeToggle){
                 robot.intakeToggle = false;
