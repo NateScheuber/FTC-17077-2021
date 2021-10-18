@@ -4,36 +4,45 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware {
 
-    public int level1   = -300;
-    public int level2   = 750;
-    public int level3   = 500;
+    boolean intakeOut                       = false;
+    boolean intakeToggle                    = true;
 
-    public Motor rightFront     = null;
-    public Motor rightMiddle    = null;
-    public Motor rightBack      = null;
-    public Motor leftFront      = null;
-    public Motor leftMiddle     = null;
-    public Motor leftBack       = null;
-    public Motor lift           = null;
-    public Motor intake         = null;
+    public int level1                       = -300;
+    public int level2                       = 750;
+    public int level3                       = 500;
+    public int currentPosition              = 0;
 
-    public Servo intakeRight    = null;
-    public Servo intakeLeft     = null;
-    public Servo claw           = null;
-    public Servo clawAngleRight = null;
-    public Servo clawAngleLeft  = null;
-    public CRServo duckRight    = null;
-    public CRServo duckLeft     = null;
+    public Motor rightFront                 = null;
+    public Motor rightMiddle                = null;
+    public Motor rightBack                  = null;
+    public Motor leftFront                  = null;
+    public Motor leftMiddle                 = null;
+    public Motor leftBack                   = null;
+    public Motor lift                       = null;
+    public Motor intake                     = null;
 
-    public MotorGroup rightMotors   = null;
-    public MotorGroup leftMotors    = null;
+    public MotorGroup rightMotors           = null;
+    public MotorGroup leftMotors            = null;
 
-    HardwareMap hardwareMap     = null;
+    public Servo intakeRight                = null;
+    public Servo intakeLeft                 = null;
+    public Servo claw                       = null;
+    public Servo clawAngleRight             = null;
+    public Servo clawAngleLeft              = null;
+    public CRServo duckRight                = null;
+    public CRServo duckLeft                 = null;
+
+    public RevColorSensorV3 intakeSensor    = null;
+    public RevColorSensorV3 clawSensor      = null;
+
+    HardwareMap hardwareMap                 = null;
+
 
     public Hardware(){
 
@@ -71,5 +80,8 @@ public class Hardware {
     CRServo duckRight       = hardwareMap.get(CRServo.class, "duckRight");
     CRServo duckLeft        = hardwareMap.get(CRServo.class, "duckLeft");
 
+
+    RevColorSensorV3 intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
+    RevColorSensorV3 clawSensor = hardwareMap.get(RevColorSensorV3.class, "clawSensor");
     }
 }
