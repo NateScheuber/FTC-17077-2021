@@ -1,7 +1,7 @@
 ## Hello!
 
 This is the public repository for the *FIRST* Tech Challenge team 17077 Adna Robotics
-![alt text](https://cdn.discordapp.com/attachments/460515802542637086/899882019650146324/Adna_Robotics_17077_Logo.jpg =250x250)
+<img src="https://cdn.discordapp.com/attachments/460515802542637086/899882019650146324/Adna_Robotics_17077_Logo.jpg" width="250" height="250">
 
 ## Check out our socials!
 [Instagram](https://www.instagram.com/adna.robotics.17077/) <br />
