@@ -12,6 +12,10 @@ public class Hardware {
 
     boolean intakeOut                       = false;
     boolean intakeToggle                    = true;
+    boolean freightInIntake                 = false;
+    boolean freightInClaw                   = false;
+    boolean clawToggle                      = true;
+    boolean clawClosed                      = false;
 
     public int level1                       = -300;
     public int level2                       = 750;

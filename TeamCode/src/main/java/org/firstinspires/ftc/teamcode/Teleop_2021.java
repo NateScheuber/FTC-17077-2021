@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -14,9 +15,16 @@ public class Teleop_2021 extends LinearOpMode {
 
 
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        ElapsedTime clawTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        clawTimer.reset();
+
+        ElapsedTime intakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        intakeTimer.reset();
 
         robot.initHardware(hardwareMap);
 
@@ -26,6 +34,14 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             waitForStart();
+
+            if(robot.clawSensor.getDistance(DistanceUnit.MM)>50){
+                clawTimer.reset();
+            }
+
+
+
+
             //dt control
             DT.arcadeDrive(-gamepad1.right_stick_y, gamepad1.left_stick_x);
 
@@ -44,21 +60,26 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //intake angle control
+            if(robot.intakeSensor.getDistance(DistanceUnit.MM)<10){
+                robot.freightInIntake = true;
+                robot.intakeOut = false;
+            }
+
             if(gamepad1.right_bumper && gamepad1.left_bumper && robot.intakeToggle){
                 robot.intakeToggle = false;
-                if(!robot.intakeOut){
-                    robot.intakeLeft.setPosition(0);
-                    robot.intakeRight.setPosition(1);
-                    robot.intakeOut = true;
-                }
-                else{
-                    robot.intakeLeft.setPosition(0.6);
-                    robot.intakeRight.setPosition(0.4);
-                    robot.intakeOut = false;
-                }
+                robot.intakeOut = !robot.intakeOut;
             }
-            else if(!gamepad1.right_bumper && !gamepad1.left_bumper && !robot.intakeToggle){
+            else if((!gamepad1.right_bumper || !gamepad1.left_bumper) && !robot.intakeToggle){
                 robot.intakeToggle = true;
+            }
+
+            if(robot.intakeOut){
+                robot.intakeLeft.setPosition(0);
+                robot.intakeRight.setPosition(1);
+            }
+            else{
+                robot.intakeLeft.setPosition(0.6);
+                robot.intakeRight.setPosition(0.4);
             }
 
 
@@ -115,9 +136,33 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //claw control
-            if(robot.currentPosition == 0 && robot.lift.atTargetPosition() && robot.clawSensor.getDistance(DistanceUnit.MM)<100){
-
+            if(robot.clawSensor.getDistance(DistanceUnit.MM)<10){
+                robot.freightInClaw = true;
+                robot.clawClosed = true;
             }
+
+            if(gamepad2.circle && robot.clawToggle){
+                robot.clawToggle = false;
+                if(robot.clawClosed){
+                    robot.clawClosed = false;
+                }
+                else{
+                    robot.clawClosed = true;
+                }
+            }
+            else if(!gamepad2.circle && !robot.clawToggle){
+                robot.intakeToggle = true;
+            }
+
+            if(robot.clawClosed){
+                robot.claw.setPosition(0);
+            }
+            else{
+                robot.claw.setPosition(0.3);
+            }
+
+
+
 
 
 
@@ -134,6 +179,10 @@ public class Teleop_2021 extends LinearOpMode {
                 robot.duckRight.set(0);
                 robot.duckLeft.set(0);
             }
+
+
+            telemetry.addData("Arm Position", robot.currentPosition);
+            telemetry.addData("Lift Motor", robot.lift.getCurrentPosition());
         }
     }
 }
