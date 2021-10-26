@@ -1,24 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.List;
 
+
+@TeleOp
 public class Teleop_2021 extends LinearOpMode {
 
     Hardware robot = new Hardware();
 
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for(LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         ElapsedTime clawTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         clawTimer.reset();
@@ -28,16 +34,17 @@ public class Teleop_2021 extends LinearOpMode {
 
         robot.initHardware(hardwareMap);
 
+        waitForStart();
+
         while(opModeIsActive()) {
             DifferentialDrive DT = new DifferentialDrive(robot.leftMotors, robot.rightMotors);
 
-
-
-            waitForStart();
-
+            /*
             if(robot.clawSensor.getDistance(DistanceUnit.MM)>50){
                 clawTimer.reset();
             }
+
+             */
 
 
 
@@ -60,10 +67,13 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //intake angle control
+            /*
             if(robot.intakeSensor.getDistance(DistanceUnit.MM)<10){
                 robot.freightInIntake = true;
                 robot.intakeOut = false;
             }
+
+             */
 
             if(gamepad1.right_bumper && gamepad1.left_bumper && robot.intakeToggle){
                 robot.intakeToggle = false;
@@ -136,10 +146,13 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //claw control
+            /*
             if(robot.clawSensor.getDistance(DistanceUnit.MM)<10){
                 robot.freightInClaw = true;
                 robot.clawClosed = true;
             }
+
+             */
 
             if(gamepad2.circle && robot.clawToggle){
                 robot.clawToggle = false;
@@ -165,7 +178,7 @@ public class Teleop_2021 extends LinearOpMode {
 
 
 
-
+/*
             //duck control
             if(gamepad2.right_bumper){
                 robot.duckRight.set(1);
@@ -179,6 +192,8 @@ public class Teleop_2021 extends LinearOpMode {
                 robot.duckRight.set(0);
                 robot.duckLeft.set(0);
             }
+
+ */
 
 
             telemetry.addData("Arm Position", robot.currentPosition);

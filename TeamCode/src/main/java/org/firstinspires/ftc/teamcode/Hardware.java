@@ -39,8 +39,11 @@ public class Hardware {
     public Servo claw                       = null;
     public Servo clawAngleRight             = null;
     public Servo clawAngleLeft              = null;
+    /*
     public CRServo duckRight                = null;
     public CRServo duckLeft                 = null;
+
+     */
 
     public RevColorSensorV3 intakeSensor    = null;
     public RevColorSensorV3 clawSensor      = null;
@@ -53,39 +56,68 @@ public class Hardware {
     }
 
 
-    public void initHardware(HardwareMap hardwareMap){
+    public void initHardware(HardwareMap ahwMap){
 
-    rightFront  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-    rightMiddle = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-    rightBack   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-    leftFront   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-    leftMiddle  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-    leftBack    = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-    lift        = new Motor(hardwareMap, "lift", Motor.GoBILDA.RPM_117);
-    intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
+        hardwareMap = ahwMap;
 
-    lift.setRunMode(Motor.RunMode.PositionControl);
-    lift.resetEncoder();
-    lift.setPositionCoefficient(0.05);
-    lift.setPositionTolerance(56);
+        Motor rightFront  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        Motor rightMiddle = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        Motor rightBack   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        Motor leftFront   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        Motor leftMiddle  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        Motor leftBack    = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        Motor lift        = new Motor(hardwareMap, "lift", Motor.GoBILDA.RPM_117);
+        Motor intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
 
-    rightMiddle.setInverted(true);
-    leftFront.setInverted(true);
-    leftBack.setInverted(true);
-
-    MotorGroup rightMotors = new MotorGroup(rightFront, rightMiddle, rightBack);
-    MotorGroup leftMotors = new MotorGroup(leftFront, leftMiddle, leftBack);
-
-    Servo intakeRight       = hardwareMap.get(Servo.class, "rightIntake");
-    Servo intakeLeft        = hardwareMap.get(Servo.class, "rightIntake");
-    Servo claw              = hardwareMap.get(Servo.class, "rightIntake");
-    Servo clawAngleRight    = hardwareMap.get(Servo.class, "rightIntake");
-    Servo clawAngleLeft     = hardwareMap.get(Servo.class, "rightIntake");
-    CRServo duckRight       = hardwareMap.get(CRServo.class, "duckRight");
-    CRServo duckLeft        = hardwareMap.get(CRServo.class, "duckLeft");
+        rightFront.set(0);
+        rightMiddle.set(0);
+        rightBack.set(0);
+        leftFront.set(0);
+        leftMiddle.set(0);
+        leftBack.set(0);
+        lift.set(0);
+        intake.set(0);
 
 
-    RevColorSensorV3 intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
-    RevColorSensorV3 clawSensor = hardwareMap.get(RevColorSensorV3.class, "clawSensor");
+        lift.setRunMode(Motor.RunMode.PositionControl);
+        lift.resetEncoder();
+        lift.setPositionCoefficient(0.05);
+        lift.setPositionTolerance(56);
+
+        rightMiddle.setInverted(true);
+        leftFront.setInverted(true);
+        leftBack.setInverted(true);
+
+        MotorGroup rightMotors = new MotorGroup(rightFront, rightMiddle, rightBack);
+        MotorGroup leftMotors = new MotorGroup(leftFront, leftMiddle, leftBack);
+
+        rightMotors.set(0);
+        leftMotors.set(0);
+
+        Servo intakeRight       = hardwareMap.get(Servo.class, "intakeRight");
+        Servo intakeLeft        = hardwareMap.get(Servo.class, "intakeLeft");
+        Servo claw              = hardwareMap.get(Servo.class, "claw");
+        Servo clawAngleRight    = hardwareMap.get(Servo.class, "clawAngleRight");
+        Servo clawAngleLeft     = hardwareMap.get(Servo.class, "clawAngleLeft");
+
+        intakeRight.setPosition(0);
+        intakeLeft.setPosition(0);
+        claw.setPosition(0);
+        clawAngleRight.setPosition(0);
+        clawAngleRight.setPosition(0);
+
+    /*
+        CRServo duckRight       = hardwareMap.get(CRServo.class, "duck Right");
+        CRServo duckLeft        = hardwareMap.get(CRServo.class, "duck Left");
+
+     */
+
+
+        RevColorSensorV3 intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
+        RevColorSensorV3 clawSensor = hardwareMap.get(RevColorSensorV3.class, "clawSensor");
+
+        intakeSensor.initialize();
+        clawSensor.initialize();
+
     }
 }
