@@ -39,12 +39,10 @@ public class Teleop_2021 extends LinearOpMode {
         while(opModeIsActive()) {
             DifferentialDrive DT = new DifferentialDrive(robot.leftMotors, robot.rightMotors);
 
-            /*
+
             if(robot.clawSensor.getDistance(DistanceUnit.MM)>50){
                 clawTimer.reset();
             }
-
-             */
 
 
 
@@ -67,13 +65,10 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //intake angle control
-            /*
             if(robot.intakeSensor.getDistance(DistanceUnit.MM)<10){
                 robot.freightInIntake = true;
                 robot.intakeOut = false;
             }
-
-             */
 
             if(gamepad1.right_bumper && gamepad1.left_bumper && robot.intakeToggle){
                 robot.intakeToggle = false;
@@ -146,13 +141,11 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //claw control
-            /*
+
             if(robot.clawSensor.getDistance(DistanceUnit.MM)<10){
                 robot.freightInClaw = true;
                 robot.clawClosed = true;
             }
-
-             */
 
             if(gamepad2.circle && robot.clawToggle){
                 robot.clawToggle = false;

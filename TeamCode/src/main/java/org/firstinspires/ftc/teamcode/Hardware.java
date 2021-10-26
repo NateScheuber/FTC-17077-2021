@@ -60,14 +60,14 @@ public class Hardware {
 
         hardwareMap = ahwMap;
 
-        Motor rightFront  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor rightMiddle = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor rightBack   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor leftFront   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor leftMiddle  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor leftBack    = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor lift        = new Motor(hardwareMap, "lift", Motor.GoBILDA.RPM_117);
-        Motor intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
+        rightFront  = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        rightMiddle = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        rightBack   = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        leftFront   = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        leftMiddle  = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        leftBack    = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        lift        = new Motor(ahwMap, "lift", Motor.GoBILDA.RPM_117);
+        intake      = new Motor(ahwMap, "intake", Motor.GoBILDA.RPM_1150);
 
         rightFront.set(0);
         rightMiddle.set(0);
