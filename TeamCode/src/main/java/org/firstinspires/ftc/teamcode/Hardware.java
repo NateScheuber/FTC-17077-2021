@@ -60,14 +60,14 @@ public class Hardware {
 
         hardwareMap = ahwMap;
 
-        rightFront  = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        rightMiddle = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        rightBack   = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        leftFront   = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        leftMiddle  = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        leftBack    = new Motor(ahwMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        lift        = new Motor(ahwMap, "lift", Motor.GoBILDA.RPM_117);
-        intake      = new Motor(ahwMap, "intake", Motor.GoBILDA.RPM_1150);
+        rightFront  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        rightMiddle = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        rightBack   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        leftFront   = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        leftMiddle  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        leftBack    = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
+        lift        = new Motor(hardwareMap, "lift", Motor.GoBILDA.RPM_117);
+        intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
 
         rightFront.set(0);
         rightMiddle.set(0);
@@ -94,17 +94,17 @@ public class Hardware {
         rightMotors.set(0);
         leftMotors.set(0);
 
-        Servo intakeRight       = hardwareMap.get(Servo.class, "intakeRight");
-        Servo intakeLeft        = hardwareMap.get(Servo.class, "intakeLeft");
-        Servo claw              = hardwareMap.get(Servo.class, "claw");
-        Servo clawAngleRight    = hardwareMap.get(Servo.class, "clawAngleRight");
-        Servo clawAngleLeft     = hardwareMap.get(Servo.class, "clawAngleLeft");
+        Servo intakeRight       = ahwMap.get(Servo.class, "intakeRight");
+        Servo intakeLeft        = ahwMap.get(Servo.class, "intakeLeft");
+        Servo claw              = ahwMap.get(Servo.class, "claw");
+        Servo clawAngleRight    = ahwMap.get(Servo.class, "clawAngleRight");
+        Servo clawAngleLeft     = ahwMap.get(Servo.class, "clawAngleLeft");
 
         intakeRight.setPosition(0);
         intakeLeft.setPosition(0);
         claw.setPosition(0);
         clawAngleRight.setPosition(0);
-        clawAngleRight.setPosition(0);
+        clawAngleLeft.setPosition(0);
 
     /*
         CRServo duckRight       = hardwareMap.get(CRServo.class, "duck Right");
@@ -112,12 +112,6 @@ public class Hardware {
 
      */
 
-
-        RevColorSensorV3 intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
-        RevColorSensorV3 clawSensor = hardwareMap.get(RevColorSensorV3.class, "clawSensor");
-
-        intakeSensor.initialize();
-        clawSensor.initialize();
 
     }
 }
