@@ -10,6 +10,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -32,14 +33,20 @@ public class Teleop_2021 extends LinearOpMode {
     boolean clawToggle                      = true;
     boolean clawClosed                      = false;
 
+    public int liftPosition                  = 0;
     public int level1                       = -300;
     public int level2                       = 1350;
-    public int level3                       = 1000;
+    public int level3                       = 950;
     public int currentPosition              = 0;
 
     public static double liftSpeed          = 0.8;
     public static double liftP              = 3.5;
-    public static int liftTolerance      = 300;
+    public static int liftTolerance         = 200;
+
+    public double clawDistance              = 0;
+    public double intakeDistance            = 0;
+    public double forwardSpeed              = 0;
+    public double turnSpeed                 = 0;
 
 
     @Override
@@ -91,6 +98,9 @@ public class Teleop_2021 extends LinearOpMode {
         Servo clawAngleRight    = hardwareMap.get(Servo.class, "clawAngleRight");
         Servo clawAngleLeft     = hardwareMap.get(Servo.class, "clawAngleLeft");
 
+        CRServo duckRight       = hardwareMap.get(CRServo.class, "duckRight");
+        CRServo duckLeft       = hardwareMap.get(CRServo.class, "duckLeft");
+
         RevColorSensorV3 intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
         RevColorSensorV3 clawSensor = hardwareMap.get(RevColorSensorV3.class, "clawSensor");
 
@@ -100,22 +110,44 @@ public class Teleop_2021 extends LinearOpMode {
         waitForStart();
         lift.setTargetPosition(0);
 
-        while(opModeIsActive()) {
+        while(opModeIsActive()) {  
+            liftPosition    = lift.getCurrentPosition();
+            clawDistance    = clawSensor.getDistance(DistanceUnit.MM);
+            intakeDistance  = intakeSensor.getDistance(DistanceUnit.MM);
 
-            lift.setPositionPIDFCoefficients(liftP);
-            lift.setTargetPositionTolerance(liftTolerance);
-
-
-
-            if(clawSensor.getDistance(DistanceUnit.MM)>50){
-                clawTimer.reset();
+            //dt control
+            if(gamepad1.dpad_right){
+                turnSpeed = 0.25;
+            }
+            else if(gamepad1.dpad_left){
+                turnSpeed = 0.25;
+            }
+            else{
+                turnSpeed = 0.66*gamepad1.left_stick_x;
             }
 
 
+            if(clawDistance>50 && !freightInClaw){
+                clawTimer.reset();
+            }
+
+            if(gamepad1.dpad_down){
+                forwardSpeed = -0.25;
+            }
+            else if(gamepad1.dpad_up){
+                forwardSpeed = 0.25;
+            }
+            else{
+                forwardSpeed = -gamepad1.right_stick_y;
+            }
 
 
-            //dt control
-            DT.arcadeDrive(-gamepad1.right_stick_y, 0.66*gamepad1.left_stick_x);
+            DT.arcadeDrive(forwardSpeed, turnSpeed);
+
+
+            if(clawDistance>50 && !freightInClaw){
+                clawTimer.reset();
+            }
 
 
             //intake control
@@ -132,7 +164,7 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //intake angle control
-            if(intakeSensor.getDistance(DistanceUnit.MM)<10){
+            if(intakeDistance<10){
                 freightInIntake = true;
                 intakeOut = false;
             }
@@ -150,8 +182,8 @@ public class Teleop_2021 extends LinearOpMode {
                 intakeRight.setPosition(1);
             }
             else{
-                intakeLeft.setPosition(0.75);
-                intakeRight.setPosition(0.25);
+                intakeLeft.setPosition(0.7);
+                intakeRight.setPosition(0.3);
             }
 
 
@@ -179,10 +211,14 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //claw angle control
-            if(lift.getCurrentPosition() > lift.getTargetPosition()-liftTolerance & lift.getCurrentPosition()< lift.getTargetPosition()+liftTolerance){
-                if(currentPosition == 0){
+            if(liftPosition > lift.getTargetPosition()-liftTolerance & liftPosition< lift.getTargetPosition()+liftTolerance){
+                if(currentPosition == 0 && !freightInClaw){
                     clawAngleLeft.setPosition(1);
                     clawAngleRight.setPosition(0);
+                }
+                else if(currentPosition == 0 && freightInClaw && clawTimer.time()>750){
+                    clawAngleLeft.setPosition(0.6);
+                    clawAngleRight.setPosition(0.4);
                 }
                 else if(currentPosition == 1){
                     clawAngleLeft.setPosition(0.3);
@@ -198,59 +234,67 @@ public class Teleop_2021 extends LinearOpMode {
                 }
             }
             else{
-                clawAngleLeft.setPosition(0.7);
-                clawAngleRight.setPosition(0.3);
+                clawAngleLeft.setPosition(0.6);
+                clawAngleRight.setPosition(0.4);
             }
 
 
             //claw control
 
-            if(clawSensor.getDistance(DistanceUnit.MM)<10){
+            if(clawDistance<10){
                 freightInClaw = true;
                 clawClosed = true;
             }
+            else if(!freightInClaw && currentPosition==0 && liftPosition > lift.getTargetPosition()-20 & liftPosition< lift.getTargetPosition()+20){
+                clawClosed=false;
+            }
+            else if(gamepad2.circle && clawDistance>10 && liftPosition > lift.getTargetPosition()-20 & liftPosition< lift.getTargetPosition()+20){
+                freightInClaw = false;
+                clawClosed = false;
+            }
+            else if(currentPosition == 0 && liftPosition > lift.getTargetPosition()-20 & liftPosition< lift.getTargetPosition()+20){
+                clawClosed = true;
+            }
+            else{
+                clawClosed = true;
+            }
 
-            if(gamepad2.circle && clawToggle){
-                clawToggle = false;
-                clawClosed = !clawClosed;
-            }
-            else if(!gamepad2.circle && !clawToggle){
-                intakeToggle = true;
-            }
 
             if(clawClosed){
-                claw.setPosition(0.7);
+                claw.setPosition(0.43);
             }
             else{
-                claw.setPosition(1);
+                claw.setPosition(0.55);
             }
 
 
 
 
 
-/*
+
             //duck control
             if(gamepad2.right_bumper){
-                duckRight.set(1);
-                duckLeft.set(1);
+                duckRight.setPower(1);
+                duckLeft.setPower(1);
             }
             else if(gamepad2.left_bumper){
-                duckRight.set(-1);
-                duckLeft.set(-1);
+                duckRight.setPower(-1);
+                duckLeft.setPower(-1);
             }
             else{
-                duckRight.set(0);
-                duckLeft.set(0);
+                duckRight.setPower(0);
+                duckLeft.setPower(0);
             }
 
- */
+
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
             telemetry.addData("Left Claw Angle", clawAngleLeft.getPosition());
             telemetry.addData("Right Claw Angle", clawAngleRight.getPosition());
             telemetry.addData("Arm Position", currentPosition);
-            telemetry.addData("Lift Motor", lift.getCurrentPosition());
+            telemetry.addData("Lift Motor", liftPosition);
+            telemetry.addData("Claw Timer", clawTimer.time());
+            telemetry.addData("Freight In Claw", freightInClaw);
             telemetry.update();
         }
     }
