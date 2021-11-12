@@ -112,7 +112,6 @@ public class Teleop_2021 extends LinearOpMode {
 
         while(opModeIsActive()) {  
             liftPosition    = lift.getCurrentPosition();
-            clawDistance    = clawSensor.getDistance(DistanceUnit.MM);
             intakeDistance  = intakeSensor.getDistance(DistanceUnit.MM);
 
             //dt control
@@ -126,11 +125,6 @@ public class Teleop_2021 extends LinearOpMode {
                 turnSpeed = 0.66*gamepad1.left_stick_x;
             }
 
-
-            if(clawDistance>50 && !freightInClaw){
-                clawTimer.reset();
-            }
-
             if(gamepad1.dpad_down){
                 forwardSpeed = -0.25;
             }
@@ -141,13 +135,9 @@ public class Teleop_2021 extends LinearOpMode {
                 forwardSpeed = -gamepad1.right_stick_y;
             }
 
-
             DT.arcadeDrive(forwardSpeed, turnSpeed);
 
 
-            if(clawDistance>50 && !freightInClaw){
-                clawTimer.reset();
-            }
 
 
             //intake control
@@ -211,6 +201,17 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //claw angle control
+            if(gamepad2.x){
+                clawDistance = 0;
+            }
+            else{
+                clawDistance = clawSensor.getDistance(DistanceUnit.MM);
+            }
+
+            if(clawDistance>50 && !freightInClaw){
+                clawTimer.reset();
+            }
+
             if(liftPosition > lift.getTargetPosition()-liftTolerance & liftPosition< lift.getTargetPosition()+liftTolerance){
                 if(currentPosition == 0 && !freightInClaw){
                     clawAngleLeft.setPosition(1);
@@ -240,7 +241,6 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             //claw control
-
             if(clawDistance<10){
                 freightInClaw = true;
                 clawClosed = true;
