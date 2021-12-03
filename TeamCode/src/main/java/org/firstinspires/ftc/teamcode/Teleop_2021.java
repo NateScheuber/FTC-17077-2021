@@ -29,13 +29,13 @@ public class Teleop_2021 extends LinearOpMode {
     boolean intakeOut                       = false;
     boolean intakeToggle                    = true;
     boolean freightInIntake                 = false;
-    boolean freightInClaw                   = false;
+    boolean freightInClaw                   = false;   
     boolean clawToggle                      = true;
     boolean clawClosed                      = false;
 
     public int liftPosition                  = 0;
     public int level1                       = -300;
-    public int level2                       = 1350;
+    public int level2                       = 1250;
     public int level3                       = 950;
     public int currentPosition              = 0;
 
@@ -114,12 +114,13 @@ public class Teleop_2021 extends LinearOpMode {
             liftPosition    = lift.getCurrentPosition();
             intakeDistance  = intakeSensor.getDistance(DistanceUnit.MM);
 
+
             //dt control
             if(gamepad1.dpad_right){
-                turnSpeed = 0.25;
+                turnSpeed = 0.2;
             }
             else if(gamepad1.dpad_left){
-                turnSpeed = 0.25;
+                turnSpeed = -0.2;
             }
             else{
                 turnSpeed = 0.66*gamepad1.left_stick_x;
@@ -139,13 +140,12 @@ public class Teleop_2021 extends LinearOpMode {
 
 
 
-
             //intake control
             if(gamepad1.right_bumper){
                 intake.set(1);
             }
             else if(gamepad1.left_bumper){
-                intake.set(-1);
+                intake.set(-0.7);
             }
             else{
                 intake.set(0);
@@ -168,13 +168,14 @@ public class Teleop_2021 extends LinearOpMode {
             }
 
             if(!intakeOut){
-                intakeLeft.setPosition(0);
-                intakeRight.setPosition(1);
+                intakeLeft.setPosition(0.03);
+                intakeRight.setPosition(0.97);
             }
             else{
                 intakeLeft.setPosition(0.7);
                 intakeRight.setPosition(0.3);
             }
+
 
 
             //arm control
@@ -240,6 +241,7 @@ public class Teleop_2021 extends LinearOpMode {
             }
 
 
+
             //claw control
             if(clawDistance<10){
                 freightInClaw = true;
@@ -248,7 +250,7 @@ public class Teleop_2021 extends LinearOpMode {
             else if(!freightInClaw && currentPosition==0 && liftPosition > lift.getTargetPosition()-20 & liftPosition< lift.getTargetPosition()+20){
                 clawClosed=false;
             }
-            else if(gamepad2.circle && clawDistance>10 && liftPosition > lift.getTargetPosition()-20 & liftPosition< lift.getTargetPosition()+20){
+            else if(gamepad2.circle && clawDistance>10 && liftPosition > lift.getTargetPosition()-50 & liftPosition< lift.getTargetPosition()+50){
                 freightInClaw = false;
                 clawClosed = false;
             }
@@ -259,16 +261,12 @@ public class Teleop_2021 extends LinearOpMode {
                 clawClosed = true;
             }
 
-
             if(clawClosed){
                 claw.setPosition(0.43);
             }
             else{
                 claw.setPosition(0.55);
             }
-
-
-
 
 
 
