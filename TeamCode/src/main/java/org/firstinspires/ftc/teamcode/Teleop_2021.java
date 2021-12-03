@@ -33,10 +33,10 @@ public class Teleop_2021 extends LinearOpMode {
     boolean clawToggle                      = true;
     boolean clawClosed                      = false;
 
-    public int liftPosition                  = 0;
-    public int level1                       = -300;
-    public int level2                       = 1250;
-    public int level3                       = 950;
+    public static int liftPosition          = 0;
+    public static int level1                = -300;
+    public static int level2                = 1250;
+    public static int level3                = 950;
     public int currentPosition              = 0;
 
     public static double liftSpeed          = 0.8;
