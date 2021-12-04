@@ -53,7 +53,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleTankDrive extends TankDrive {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0.65, 0, 70);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
     public static double VX_WEIGHT = 1;
@@ -98,13 +98,14 @@ public class SampleTankDrive extends TankDrive {
         // add/remove motors depending on your robot (e.g., 6WD)
         DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         DcMotorEx leftMiddle = hardwareMap.get(DcMotorEx.class, "leftMiddle");
-        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "leftBack");
+        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "rightFront");
         DcMotorEx rightMiddle = hardwareMap.get(DcMotorEx.class, "rightMiddle");
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightBack");
 
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
         leftMiddle.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightMiddle.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motors = Arrays.asList(leftFront, leftMiddle, leftRear, rightRear, rightMiddle, rightFront);
         leftMotors = Arrays.asList(leftFront, leftMiddle, leftFront);

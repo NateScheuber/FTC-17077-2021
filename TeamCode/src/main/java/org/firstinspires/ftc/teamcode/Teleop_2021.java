@@ -32,6 +32,8 @@ public class Teleop_2021 extends LinearOpMode {
     boolean freightInClaw                   = false;   
     boolean clawToggle                      = true;
     boolean clawClosed                      = false;
+    boolean TSEToggle                       = true;
+    boolean TSEClosed                       = false;
 
     public static int liftPosition          = 0;
     public static int level1                = -300;
@@ -42,6 +44,7 @@ public class Teleop_2021 extends LinearOpMode {
     public static double liftSpeed          = 0.8;
     public static double liftP              = 3.5;
     public static int liftTolerance         = 200;
+    public static double TSEArmPosition     = 0.4;
 
     public double clawDistance              = 0;
     public double intakeDistance            = 0;
@@ -97,9 +100,10 @@ public class Teleop_2021 extends LinearOpMode {
         Servo claw              = hardwareMap.get(Servo.class, "claw");
         Servo clawAngleRight    = hardwareMap.get(Servo.class, "clawAngleRight");
         Servo clawAngleLeft     = hardwareMap.get(Servo.class, "clawAngleLeft");
+        Servo TSEClaw           = hardwareMap.get(Servo.class, "TSE Claw");
+        Servo TSEArm            = hardwareMap.get(Servo.class, "TSE Arm");
 
         CRServo duckRight       = hardwareMap.get(CRServo.class, "duckRight");
-        CRServo duckLeft       = hardwareMap.get(CRServo.class, "duckLeft");
 
         RevColorSensorV3 intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
         RevColorSensorV3 clawSensor = hardwareMap.get(RevColorSensorV3.class, "clawSensor");
@@ -269,19 +273,44 @@ public class Teleop_2021 extends LinearOpMode {
             }
 
 
+            //TSE Control
+            if (gamepad1.cross && TSEToggle){
+                TSEToggle=false;
+                if(!TSEClosed){
+                    TSEClaw.setPosition(0);
+                    TSEClosed=true;
+                }
+                else{
+                    TSEClaw.setPosition(1);
+                    TSEClosed=false;
+                }
+            }
+            else if(!gamepad1.cross && !TSEToggle){
+                TSEToggle=true;
+            }
+
+
+            if(gamepad1.circle){
+                TSEArm.setPosition(0.7);
+            }
+            else if(gamepad1.triangle){
+                TSEArm.setPosition(TSEArmPosition);
+            }
+            else if(gamepad1.square){
+                TSEArm.setPosition(0.05);
+            }
+
+
 
             //duck control
             if(gamepad2.right_bumper){
                 duckRight.setPower(1);
-                duckLeft.setPower(1);
             }
             else if(gamepad2.left_bumper){
                 duckRight.setPower(-1);
-                duckLeft.setPower(-1);
             }
             else{
                 duckRight.setPower(0);
-                duckLeft.setPower(0);
             }
 
 

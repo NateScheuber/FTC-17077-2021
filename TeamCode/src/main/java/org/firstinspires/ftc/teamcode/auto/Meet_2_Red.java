@@ -24,8 +24,6 @@ import static org.firstinspires.ftc.teamcode.Teleop_2021.level3;
 @Autonomous(name = "Red")
 public class Meet_2_Red extends LinearOpMode {
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

@@ -19,10 +19,8 @@ import static org.firstinspires.ftc.teamcode.Teleop_2021.liftP;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftTolerance;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.level3;
 
-@Autonomous(name = "Red")
+@Autonomous(name = "Blue")
 public class Meet_2_Blue extends LinearOpMode {
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
