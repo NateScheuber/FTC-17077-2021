@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.List;
@@ -36,14 +37,14 @@ public class Teleop_2021 extends LinearOpMode {
     boolean TSEClosed                       = false;
 
     public static int liftPosition          = 0;
-    public static int level1                = -300;
-    public static int level2                = 1250;
-    public static int level3                = 950;
+    public static int level1                = -200;
+    public static int level2                = 830;
+    public static int level3                = 630;
     public int currentPosition              = 0;
 
-    public static double liftSpeed          = 0.8;
+    public static double liftSpeed          = 0.5;
     public static double liftP              = 3.5;
-    public static int liftTolerance         = 200;
+    public static int liftTolerance         = 75;
     public static double TSEArmPosition     = 0.4;
 
     public double clawDistance              = 0;
@@ -112,6 +113,7 @@ public class Teleop_2021 extends LinearOpMode {
         clawSensor.initialize();
 
         waitForStart();
+        TSEArm.setPosition(0.05);
         lift.setTargetPosition(0);
 
         while(opModeIsActive()) {  
@@ -176,8 +178,8 @@ public class Teleop_2021 extends LinearOpMode {
                 intakeRight.setPosition(0.97);
             }
             else{
-                intakeLeft.setPosition(0.7);
-                intakeRight.setPosition(0.3);
+                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.28);
             }
 
 
@@ -201,7 +203,13 @@ public class Teleop_2021 extends LinearOpMode {
                 currentPosition = 0;
             }
 
-            lift.setPower(liftSpeed);
+
+            if(lift.getCurrent(CurrentUnit.AMPS)>5.0){
+                lift.setPower(0);
+            }
+            else{
+                lift.setPower(liftSpeed);
+            }
 
 
 
@@ -222,7 +230,7 @@ public class Teleop_2021 extends LinearOpMode {
                     clawAngleLeft.setPosition(1);
                     clawAngleRight.setPosition(0);
                 }
-                else if(currentPosition == 0 && freightInClaw && clawTimer.time()>750){
+                else if(currentPosition == 0 && clawTimer.time() > 750){
                     clawAngleLeft.setPosition(0.6);
                     clawAngleRight.setPosition(0.4);
                 }
@@ -316,12 +324,13 @@ public class Teleop_2021 extends LinearOpMode {
 
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-            telemetry.addData("Left Claw Angle", clawAngleLeft.getPosition());
-            telemetry.addData("Right Claw Angle", clawAngleRight.getPosition());
-            telemetry.addData("Arm Position", currentPosition);
+
+            telemetry.addData("Arm Level", currentPosition);
+            telemetry.addData("Arm Position", lift.getCurrentPosition());
+            telemetry.addData("Arm Target", lift.getTargetPosition());
             telemetry.addData("Lift Motor", liftPosition);
-            telemetry.addData("Claw Timer", clawTimer.time());
             telemetry.addData("Freight In Claw", freightInClaw);
+            telemetry.addData("Lift Amperage", lift.getCurrent(CurrentUnit.AMPS));
             telemetry.update();
         }
     }

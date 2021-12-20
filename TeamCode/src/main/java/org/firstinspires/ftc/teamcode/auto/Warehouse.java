@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftP;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftTolerance;
@@ -24,6 +25,8 @@ public class Warehouse extends LinearOpMode {
         Motor leftFront   = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_1150);
         Motor leftMiddle  = new Motor(hardwareMap, "leftMiddle", Motor.GoBILDA.RPM_1150);
         Motor leftBack    = new Motor(hardwareMap, "leftBack", Motor.GoBILDA.RPM_1150);
+
+        Servo TSEArm            = hardwareMap.get(Servo.class, "TSE Arm");
 
         rightMiddle.setInverted(true);
         leftMiddle.setInverted(true);
@@ -44,6 +47,8 @@ public class Warehouse extends LinearOpMode {
         lift.setTargetPositionTolerance(liftTolerance);
 
         waitForStart();
+        TSEArm.setPosition(0.05);
+
         lift.setTargetPosition(0);
         lift.setPower(1);
 

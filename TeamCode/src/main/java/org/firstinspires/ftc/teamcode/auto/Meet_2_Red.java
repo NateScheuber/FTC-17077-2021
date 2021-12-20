@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,6 +22,7 @@ import static org.firstinspires.ftc.teamcode.Teleop_2021.liftP;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftTolerance;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.level3;
 
+@Disabled
 @Autonomous(name = "Red")
 public class Meet_2_Red extends LinearOpMode {
 
@@ -75,7 +77,7 @@ public class Meet_2_Red extends LinearOpMode {
         waitForStart();
         drive.followTrajectory(Carousel);
         duckRight.setPower(1);
-        sleep(2000);
+        sleep(3000);
         duckRight.setPower(0);
 
         drive.followTrajectory(Place_Element);

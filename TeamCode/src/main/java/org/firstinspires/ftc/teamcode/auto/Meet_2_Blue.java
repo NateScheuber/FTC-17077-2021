@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +20,7 @@ import static org.firstinspires.ftc.teamcode.Teleop_2021.liftP;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftTolerance;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.level3;
 
+@Disabled
 @Autonomous(name = "Blue")
 public class Meet_2_Blue extends LinearOpMode {
 
