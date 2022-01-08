@@ -27,6 +27,14 @@ import static org.firstinspires.ftc.teamcode.Teleop_2021.liftTolerance;
 @Autonomous
 public class Warehouse_Blue extends LinearOpMode {
 
+    boolean intakeToggle = true;
+    boolean intakeOut = false;
+    boolean deposit = false;
+    boolean clawClosed = true;
+
+
+
+
     enum State{
         Preload,
         AutoCycle,
@@ -53,6 +61,7 @@ public class Warehouse_Blue extends LinearOpMode {
         CRServo duckRight = hardwareMap.get(CRServo.class, "duckRight");
 
         DcMotorEx lift = hardwareMap.get(DcMotorEx.class, "lift");
+        Motor intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -67,6 +76,12 @@ public class Warehouse_Blue extends LinearOpMode {
         ElapsedTime AutoTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         AutoTimer.reset();
 
+        ElapsedTime intakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        intakeTimer.reset();
+
+        ElapsedTime transferTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        transferTimer.reset();
+
         clawAngleLeft.setPosition(0.6);
         clawAngleRight.setPosition(0.4);
         claw.setPosition(0.43);
@@ -75,28 +90,52 @@ public class Warehouse_Blue extends LinearOpMode {
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-31, 63, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(12, 63, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         Trajectory Preload = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(0, 40, Math.toRadians(-135)))
+                .lineToLinearHeading(new Pose2d(-2, 44, Math.toRadians(65)))
                 .build();
 
         Trajectory AutoCycle = drive.trajectoryBuilder(Preload.end())
-                .splineTo(new Vector2d(8, 65), Math.toRadians(0))
-
-                .splineTo(new Vector2d(0, 40), Math.toRadians(-135))
+                .addDisplacementMarker(5, () -> {
+                    deposit = false;
+                })
+                .addDisplacementMarker(36,() -> {
+                    deposit = true;
+                })
+                .splineTo(new Vector2d(8, 64), Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    intakeLeft.setPosition(0.03);
+                    intakeRight.setPosition(0.97);
+                    intake.set(1);
+                })
+                .splineTo(new Vector2d(40, 64), Math.toRadians(0))
+                .addDisplacementMarker(() -> {
+                    intakeLeft.setPosition(0.72);
+                    intakeRight.setPosition(0.28);
+                    intake.set(0);
+                })
+                .splineToSplineHeading(new Pose2d(16, 64, Math.toRadians(0)), Math.toRadians(180))
+                .splineTo(new Vector2d(-2, 44), Math.toRadians(-108))
+                .addDisplacementMarker(() -> {
+                    clawClosed = false;
+                })
                 .build();
 
         Trajectory Park = drive.trajectoryBuilder(AutoCycle.end())
-                .forward(48)
+                .splineTo(new Vector2d(8, 64), Math.toRadians(0))
+                .splineTo(new Vector2d(40, 64), Math.toRadians(0))
                 .build();
 
         waitForStart();
         AutoTimer.reset();
+        intakeTimer.reset();
+        transferTimer.reset();
 
 
         while (opModeIsActive() & !isStopRequested()){
+
             switch (currentState) {
                 case Preload:
                     if (!drive.isBusy()) {
@@ -105,7 +144,7 @@ public class Warehouse_Blue extends LinearOpMode {
                     }
                     break;
                 case AutoCycle:
-                    if (!drive.isBusy() && AutoTimer.time() < 20) {
+                    if (!drive.isBusy() && AutoTimer.time() < 20 && !lift.isBusy()) {
                         currentState = State.AutoCycle;
                         drive.followTrajectoryAsync(AutoCycle);
                     } else if (!drive.isBusy()) {
@@ -117,52 +156,68 @@ public class Warehouse_Blue extends LinearOpMode {
 
                     break;
             }
-        drive.update();
 
-            if()){
-                lift.setTargetPosition(0);
-            }
+            drive.update();
+
 
             if(intakeSensor.getDistance(DistanceUnit.MM)<10 && intakeToggle){
                 intakeToggle = false;
-                if(!intakeOut){
-                    drive.
-                }
-
+                intakeOut = false;
+                intakeLeft.setPosition(0.72);
+                intakeRight.setPosition(0.28);
+                transferTimer.reset();
+            }
+            else{
+                intakeToggle=true;
+                intakeTimer.reset();
             }
 
-        }
-    }
-    public void score() throws InterruptedException {
-        Servo clawAngleRight    = hardwareMap.get(Servo.class, "clawAngleRight");
-        Servo clawAngleLeft     = hardwareMap.get(Servo.class, "clawAngleLeft");
-        Servo claw              = hardwareMap.get(Servo.class, "claw");
+            if(!intakeOut && (intakeTimer.time()>500 || transferTimer.time()<1200)){
+                intake.set(-0.7);
+            }
 
-        DcMotorEx lift = hardwareMap.get(DcMotorEx.class, "lift");
 
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setTargetPosition(0);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPositionPIDFCoefficients(liftP);
-        lift.setTargetPositionTolerance(liftTolerance);
+            //lift control
+            if(deposit && clawClosed){
+                lift.setTargetPosition(level3);
+            }
+            else if(!deposit){
+                lift.setTargetPosition(0);
+            }
 
-        lift.setTargetPosition(level3);
-        while(lift.getCurrentPosition() > lift.getTargetPosition()-10 & lift.getCurrentPosition()< lift.getTargetPosition()+10){
-            lift.setPower(liftSpeed);
-        }
-        clawAngleLeft.setPosition(0.2);
-        clawAngleRight.setPosition(0.8);
-        sleep(200);
-        claw.setPosition(0.55);
-        sleep(200);
-        claw.setPosition(0.43);
-        sleep(200);
-        clawAngleLeft.setPosition(0.6);
-        clawAngleRight.setPosition(0.4);
-        lift.setTargetPosition(0);
-        while(lift.getCurrentPosition() > lift.getTargetPosition()-10 & lift.getCurrentPosition()< lift.getTargetPosition()+10){
-            lift.setPower(liftSpeed);
+
+            //claw angle control
+            if(!lift.isBusy()){
+                if(!deposit && !clawClosed){
+                    clawAngleLeft.setPosition(1);
+                    clawAngleRight.setPosition(0);
+                }
+                else if(!deposit){
+                    clawAngleLeft.setPosition(0.6);
+                    clawAngleRight.setPosition(0.4);
+                }
+                else{
+                    clawAngleLeft.setPosition(0.2);
+                    clawAngleRight.setPosition(0.8);
+                }
+            }
+            else{
+                clawAngleLeft.setPosition(0.6);
+                clawAngleRight.setPosition(0.4);
+            }
+
+
+            //claw control
+            if(transferTimer.time()>1200 && transferTimer.time()<1250){
+                clawClosed = true;
+            }
+
+            if(clawClosed){
+                claw.setPosition(0.43);
+            }
+            else{
+                claw.setPosition(0.55);
+            }
         }
     }
 }

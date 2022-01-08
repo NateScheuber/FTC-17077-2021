@@ -37,7 +37,7 @@ public class Teleop_2021 extends LinearOpMode {
     boolean TSEToggle                       = true;
     boolean TSEClosed                       = false;
 
-    public static int liftPosition          = 0;
+    public int liftPosition                 = 0;
     public static int level1                = -300;
     public static int level2                = 1300;
     public static int level3                = 900;
@@ -69,7 +69,7 @@ public class Teleop_2021 extends LinearOpMode {
         ElapsedTime intakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         intakeTimer.reset();
 
-        //Motor lift        = new Motor(hardwareMap, "lift", Motor.GoBILDA.RPM_117);
+
         Motor intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
         DcMotorEx lift = hardwareMap.get(DcMotorEx.class, "lift");
 
