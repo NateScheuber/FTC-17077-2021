@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -37,12 +38,12 @@ public class Teleop_2021 extends LinearOpMode {
     boolean TSEClosed                       = false;
 
     public static int liftPosition          = 0;
-    public static int level1                = -200;
-    public static int level2                = 830;
-    public static int level3                = 630;
+    public static int level1                = -300;
+    public static int level2                = 1300;
+    public static int level3                = 900;
     public int currentPosition              = 0;
 
-    public static double liftSpeed          = 0.5;
+    public static double liftSpeed          = 1;
     public static double liftP              = 3.5;
     public static int liftTolerance         = 75;
     public static double TSEArmPosition     = 0.4;
@@ -50,6 +51,7 @@ public class Teleop_2021 extends LinearOpMode {
     public double clawDistance              = 0;
     public double intakeDistance            = 0;
     public double forwardSpeed              = 0;
+    public double strafeSpeed               = 0;
     public double turnSpeed                 = 0;
 
 
@@ -72,20 +74,16 @@ public class Teleop_2021 extends LinearOpMode {
         DcMotorEx lift = hardwareMap.get(DcMotorEx.class, "lift");
 
         Motor rightFront  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
-        Motor rightMiddle = new Motor(hardwareMap, "rightMiddle", Motor.GoBILDA.RPM_1150);
-        Motor rightBack   = new Motor(hardwareMap, "rightBack", Motor.GoBILDA.RPM_1150);
+        //Motor rightMiddle = new Motor(hardwareMap, "rightMiddle", Motor.GoBILDA.RPM_1150);
+        Motor rightBack   = new Motor(hardwareMap, "rightRear", Motor.GoBILDA.RPM_1150);
         Motor leftFront   = new Motor(hardwareMap, "leftFront", Motor.GoBILDA.RPM_1150);
-        Motor leftMiddle  = new Motor(hardwareMap, "leftMiddle", Motor.GoBILDA.RPM_1150);
-        Motor leftBack    = new Motor(hardwareMap, "leftBack", Motor.GoBILDA.RPM_1150);
+        //Motor leftMiddle  = new Motor(hardwareMap, "leftMiddle", Motor.GoBILDA.RPM_1150);
+        Motor leftBack    = new Motor(hardwareMap, "leftRear", Motor.GoBILDA.RPM_1150);
 
-        rightMiddle.setInverted(true);
-        leftMiddle.setInverted(true);
+        leftBack.setInverted(true);
+        leftFront.setInverted(true);
 
-
-        MotorGroup rightMotors = new MotorGroup(rightFront, rightMiddle, rightBack);
-        MotorGroup leftMotors = new MotorGroup(leftFront, leftMiddle, leftBack);
-
-        DifferentialDrive DT = new DifferentialDrive(leftMotors, rightMotors);
+        MecanumDrive DT = new MecanumDrive(leftFront, rightFront, leftBack, rightBack);
 
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -123,13 +121,13 @@ public class Teleop_2021 extends LinearOpMode {
 
             //dt control
             if(gamepad1.dpad_right){
-                turnSpeed = 0.2;
+                strafeSpeed = 0.2;
             }
             else if(gamepad1.dpad_left){
-                turnSpeed = -0.2;
+                strafeSpeed = -0.2;
             }
             else{
-                turnSpeed = 0.66*gamepad1.left_stick_x;
+                strafeSpeed = gamepad1.right_stick_x;
             }
 
             if(gamepad1.dpad_down){
@@ -142,8 +140,9 @@ public class Teleop_2021 extends LinearOpMode {
                 forwardSpeed = -gamepad1.right_stick_y;
             }
 
-            DT.arcadeDrive(forwardSpeed, turnSpeed);
+            turnSpeed = gamepad1.left_stick_x + gamepad1.right_trigger*0.25 + -gamepad1.left_trigger*0.25;
 
+            DT.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
 
 
             //intake control

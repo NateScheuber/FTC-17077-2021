@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,7 @@ import static org.firstinspires.ftc.teamcode.Teleop_2021.liftP;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftSpeed;
 import static org.firstinspires.ftc.teamcode.Teleop_2021.liftTolerance;
 
+@Autonomous
 public class Warehouse_Red extends LinearOpMode {
 
 
@@ -42,7 +44,7 @@ public class Warehouse_Red extends LinearOpMode {
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-31,63, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(-31,-63, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         Trajectory GrabTSE = drive.trajectoryBuilder(startPose)
