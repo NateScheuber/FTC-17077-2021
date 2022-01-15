@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -70,7 +71,8 @@ public class Teleop_2021 extends LinearOpMode {
         intakeTimer.reset();
 
 
-        Motor intake      = new Motor(hardwareMap, "intake", Motor.GoBILDA.RPM_1150);
+        Motor intake      = new Motor(hardwareMap, "intake1", Motor.GoBILDA.RPM_1150);
+        Motor duck        = new Motor(hardwareMap, "duck");
         DcMotorEx lift = hardwareMap.get(DcMotorEx.class, "lift");
 
         Motor rightFront  = new Motor(hardwareMap, "rightFront", Motor.GoBILDA.RPM_1150);
@@ -83,8 +85,10 @@ public class Teleop_2021 extends LinearOpMode {
         leftBack.setInverted(true);
         leftFront.setInverted(true);
 
-        MecanumDrive DT = new MecanumDrive(leftFront, rightFront, leftBack, rightBack);
+        MecanumDrive DT = new MecanumDrive(leftFront, rightFront,
+                                            leftBack, rightBack);
 
+        duck.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -142,15 +146,20 @@ public class Teleop_2021 extends LinearOpMode {
 
             turnSpeed = gamepad1.left_stick_x + gamepad1.right_trigger*0.25 + -gamepad1.left_trigger*0.25;
 
-            DT.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+            rightFront.set(forwardSpeed-strafeSpeed-turnSpeed);
+            rightBack.set(forwardSpeed+strafeSpeed-turnSpeed);
+            leftFront.set(forwardSpeed+strafeSpeed+turnSpeed);
+            leftBack.set(forwardSpeed-strafeSpeed+turnSpeed);
+
+            //DT.driveRobotCentric(gamepad1.left_stick_x, -gamepad1.right_stick_y, -gamepad1.right_stick_x);
 
 
             //intake control
             if(gamepad1.right_bumper){
-                intake.set(1);
+                intake.set(-1);
             }
             else if(gamepad1.left_bumper){
-                intake.set(-0.7);
+                intake.set(0.7);
             }
             else{
                 intake.set(0);
@@ -298,7 +307,7 @@ public class Teleop_2021 extends LinearOpMode {
 
 
             if(gamepad1.circle){
-                TSEArm.setPosition(0.7);
+                TSEArm.setPosition(0.72);
             }
             else if(gamepad1.triangle){
                 TSEArm.setPosition(TSEArmPosition);
@@ -312,12 +321,15 @@ public class Teleop_2021 extends LinearOpMode {
             //duck control
             if(gamepad2.right_bumper){
                 duckRight.setPower(1);
+                duck.set(1);
             }
             else if(gamepad2.left_bumper){
                 duckRight.setPower(-1);
+                duck.set(-1);
             }
             else{
                 duckRight.setPower(0);
+                duck.set(0);
             }
 
 
@@ -330,6 +342,11 @@ public class Teleop_2021 extends LinearOpMode {
             telemetry.addData("Lift Motor", liftPosition);
             telemetry.addData("Freight In Claw", freightInClaw);
             telemetry.addData("Lift Amperage", lift.getCurrent(CurrentUnit.AMPS));
+
+            telemetry.addData("Front Right", rightFront.getCurrentPosition());
+            telemetry.addData("Left Front", leftFront.getCurrentPosition());
+            telemetry.addData("Right Rear", rightBack.getCurrentPosition());
+            telemetry.addData("left Rear", leftBack.getCurrentPosition());
             telemetry.update();
         }
     }
